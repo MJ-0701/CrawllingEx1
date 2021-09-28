@@ -23,7 +23,7 @@ def _close_chrome(chrome: webdriver):
     '''
     크롬 종료
 
-    "param chrome: 크롬 드라이버 인스턴스
+    :param chrome: 크롬 드라이버 인스턴스
     '''
     def close():
         chrome.close()
