@@ -5,6 +5,7 @@ from chromedriver import generate_chrome
 from selenium import webdriver
 import ssl
 import chromedriver_autoinstaller
+from selenium.webdriver.common.keys import Keys  # 키이벤트 발생
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -58,4 +59,30 @@ chrome = generate_chrome(
 #페이지 요청
 url = 'https://github.com/login'
 chrome.get(url)
-time.sleep(3) # 3초 딜레이
+time.sleep(3)   # 기다리는 시간 3초
+
+#  selector: login_field
+elm = chrome.find_element_by_id('login_field')
+elm.send_keys('깃허브 아이디')
+
+#  selector: password
+elm = chrome.find_element_by_id('password')
+elm.send_keys('깃허브 패스워드')
+
+# 로그인 정보를 입력후 로그인 요청을 위해 엔터키 이벤트를 발생 시켜야함. 클릭 이벤트로 하는 방법도 있지만 전에 해봤으므로, 키이벤트로 처리해보겠다.
+elm.send_keys(Keys.RETURN)
+
+time.sleep(5)
+
+url = 'https://github.com/MJ-0701/CrawllingEx1/tree/master'
+chrome.get(url)
+time.sleep(5)
+
+# 다운로드 토글 xpath
+elm = chrome.find_element_by_xpath('//*[@id="repo-content-pjax-container"]/div/div[2]/div[1]/div[2]/span/get-repo/feature-callout/details/summary')
+elm.click()
+
+# 다운로드 xpath
+elm = chrome.find_element_by_xpath('//*[@id="repo-content-pjax-container"]/div/div[2]/div[1]/div[2]/span/get-repo/feature-callout/details/div/div/div[1]/ul/li[3]')
+elm.click()
+time.sleep(5)
