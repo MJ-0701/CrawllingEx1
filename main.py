@@ -71,7 +71,7 @@ elm.send_keys('깃허브 아이디')
 
 #  selector: password
 elm = chrome.find_element_by_id('password')
-elm.send_keys('깃허브 패스워드')
+elm.send_keys('깃허브 패스워드')   # 커밋용 주석
 
 # 로그인 정보를 입력후 로그인 요청을 위해 엔터키 이벤트를 발생 시켜야함. 클릭 이벤트로 하는 방법도 있지만 전에 해봤으므로, 키이벤트로 처리해보겠다.
 elm.send_keys(Keys.RETURN)
