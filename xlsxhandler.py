@@ -1,4 +1,5 @@
 import pandas as pd
+from models import FileDiffInfo
 
 
 def _compare_file_list(compare_list: list, compare_target_list) -> list:
@@ -52,14 +53,41 @@ def get_file_diff_info_list(after_xlsx_path_list: list, before_dir_path: str) ->
         try:
             after_df = pd.read_excel(xlsx_path)
             file_name = xlsx_path.split('/')[-1]
-            print('after -', file_name, ':')
-            print(after_df)
 
             # 이전 버전 조회
             before_df = pd.read_excel(f'{before_dir_path}/{file_name}')
-            print('before -', file_name, ':')
-            print(before_df)
+
         except FileNotFoundError:
             continue
+
+    # 시트 데이터가 같은지 비교 후 같지 않다면 상세 비교
+    if not before_df.equals(after_df):  # 데이터가 다를경우
+        # 두 데이터의 다른 부분 추출
+        df = pd.concat([before_df, after_df])   # concat() 함수로 두 데이터 프레임을 합쳐주고
+        duplicates_df = df.drop_duplicates(keep=False)  # 중복된 데이터를 제거해 준다. keep=False 옵션을 주어야 모든 중복 데이터가 제거된 결과를 반환한다. 설정하지 않을 경우 기본값 first가 셋팅되어 첫 번째 중복 데이터만 제거된다.
+
+        # ROW 데이터 스트링 리스트로 변환
+        before_list = [str(r) for r in before_df.values.tolist()]
+        after_list = [str(r) for r in after_df.values.tolist()]
+
+        # 변경 전 데이터, 변경 후 데이터 분류
+        changed_list = []
+        duplicates_list = [str(r) for r in duplicates_df.values.tolist()]
+        for row in duplicates_list:
+            try:
+                before_list.index(row)
+                changed_list.append(f'~{row}~')     # 데이터를 추가할때 before에 있던 데이터는 앞뒤로 ~ 처리를 해준다 추후 내용을 전달할때 마크다운 역할을 하기 때문이다(슬랙 마크다운 문법).
+
+            except ValueError:
+                pass
+
+            try:
+                after_list.index(row)
+                changed_list.append(row)
+            except ValueError:  # index() 로 찾는데 데이터가 없을 경우 해당 에러가 발생한다. 데이터가 없는건 에러가 아니기때문에 pass 처리 해준다.
+                pass
+        # 변경된 정보를 핸들링할 객체 생성
+        info = FileDiffInfo(file_name, changed_list)
+        diff_info_list.append(info)
 
     return diff_info_list

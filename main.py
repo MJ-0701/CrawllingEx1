@@ -121,8 +121,13 @@ after_xlsx_list = glob.glob(f'{after_dir_path}/*.xlsx')
 
 # 파일 삭제, 추가 정보 비교 분석
 deleted_file_list, new_file_list = get_dir_update_info(before_xlsx_list, after_xlsx_list)
+print('삭제된 파일 :', deleted_file_list)
+print('추가된 파일 :', new_file_list)
 
 # 파일 비교 분석 후 가져오기
 file_diff_info_list = get_file_diff_info_list(after_xlsx_list, before_dir_path)
 
+print('파일 변경 정보: ')
+for f in file_diff_info_list:
+    print(f'{f.file_name} : \n', f.get_diff_row_format_str())
 
