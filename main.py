@@ -123,6 +123,6 @@ after_xlsx_list = glob.glob(f'{after_dir_path}/*.xlsx')
 deleted_file_list, new_file_list = get_dir_update_info(before_xlsx_list, after_xlsx_list)
 
 # 파일 비교 분석 후 가져오기
-file_diff_info_list = get_file_diff_info_list(after_xlsx_list, before_dir_path)
+file_diff_info_list = get_file_diff_info_list(after_xlsx_list, before_dir_path)     #
 
 
