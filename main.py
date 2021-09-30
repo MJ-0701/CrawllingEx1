@@ -8,7 +8,8 @@ from selenium import webdriver
 import ssl
 import chromedriver_autoinstaller
 from selenium.webdriver.common.keys import Keys  # 키이벤트 발생
-
+import zipfile  # 집파일 해제를 위한 파이썬 내장 모듈
+from xlsxhandler import get_dir_update_info, get_file_diff_info_list
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -77,7 +78,7 @@ elm.send_keys(Keys.RETURN)
 
 time.sleep(5)
 
-
+url = 'https://github.com/modeal-mj/Dummydata'
 chrome.get(url)
 time.sleep(5)
 
@@ -89,4 +90,39 @@ elm.click()
 elm = chrome.find_element_by_xpath('//*[@id="repo-content-pjax-container"]/div/div[2]/div[1]/div[2]/span/get-repo/feature-callout/details/div/div/div[1]/ul/li[3]')
 elm.click()
 time.sleep(5)
+
+
+# zip 파일 경로와 압축해제 후 디렉토리 경로 셋팅
+repo_name = 'Dummydata-master'
+zip_file_path = f'{DOWNLOAD_DIR}/{repo_name}.zip'
+xlsx_dir_path = f'{DOWNLOAD_DIR}/{repo_name}'
+
+# 압축해제 전 디렉토리가 존재한다면 먼저 삭제하는 코드 추가
+if os.path.isdir(xlsx_dir_path):
+    shutil.rmtree(xlsx_dir_path)    # shutill.rmtree() 함수를 사용하여 삭제할 디렉토리와 그 하위 항목들 전체 삭제.
+
+# os.path.isfile() 함수를 통해 파일 존재여부를 확인
+if os.path.isfile(zip_file_path):
+    z = zipfile.ZipFile(zip_file_path)
+    z.extractall(DOWNLOAD_DIR)  # extractall() 함수로 압축을 푼다.
+    z.close()
+    os.remove(zip_file_path)    # zip 파일은 더이상 필요 없으니 삭제.
+
+# 파일 찾기 glob 사용
+
+# 압축 해제한 파일 디렉토리의 경로 선언
+before_dir_path = f'{xlsx_dir_path}/Before'
+after_dir_path = f'{xlsx_dir_path}/After'
+
+# 파일 경로의 리스트 조회
+# glob 은 와일드카ㅡ 문자를 사용해서 일ㅈ어한 패턴을 가진 파일 이름들을 지정하기 위한 패턴을 의미한다.
+before_xlsx_list = glob.glob(f'{before_dir_path}/*.xlsx')
+after_xlsx_list = glob.glob(f'{after_dir_path}/*.xlsx')
+
+# 파일 삭제, 추가 정보 비교 분석
+deleted_file_list, new_file_list = get_dir_update_info(before_xlsx_list, after_xlsx_list)
+
+# 파일 비교 분석 후 가져오기
+file_diff_info_list = get_file_diff_info_list(after_xlsx_list, before_dir_path)
+
 
