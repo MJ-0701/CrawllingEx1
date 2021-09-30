@@ -1,3 +1,5 @@
+import glob
+import shutil
 import sys
 import os
 import time
@@ -6,6 +8,7 @@ from selenium import webdriver
 import ssl
 import chromedriver_autoinstaller
 from selenium.webdriver.common.keys import Keys  # 키이벤트 발생
+
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -74,7 +77,7 @@ elm.send_keys(Keys.RETURN)
 
 time.sleep(5)
 
-url = 'https://github.com/MJ-0701/CrawllingEx1/tree/master'
+
 chrome.get(url)
 time.sleep(5)
 
@@ -86,3 +89,4 @@ elm.click()
 elm = chrome.find_element_by_xpath('//*[@id="repo-content-pjax-container"]/div/div[2]/div[1]/div[2]/span/get-repo/feature-callout/details/div/div/div[1]/ul/li[3]')
 elm.click()
 time.sleep(5)
+
